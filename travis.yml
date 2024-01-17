@@ -1,0 +1,25 @@
+sudo: required      # superuser permission
+language: generic
+
+services:
+  - docker          # travis needs to understand, that we need docker cli. Travis bo instaliral ta doker v naš kontejnar
+
+before_install:
+  - docker build -t stephengrider/docker-react -f Dockerfile.dev . # dodamo tag stephangrider/...
+
+# npm run test samo visi v zraku (uporabimo lahko ukaze p, q, t...) dodamo -e CI=true
+script:
+  - docker run -e CI=true stephengrider/docker-react npm run test
+  
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "docker"
+  env: "docker-env"
+  bucket_name: "elasticbeanstalk-us-east-1-923445559289"
+  bucket_path: "docker"
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY  # key, ki smo ga dodali v travis
+  secret_access_key: "$AWS_SECRET_KEY"

@@ -6,4 +6,6 @@ COPY . .
 RUN npm run build
 
 FROM nginx
+# expose samo za developerje nima pomene za elasticbean pa vzame in naredi mapping
+EXPOSE 80       
 COPY --from=builder /app/build /usr/share/nginx/html
